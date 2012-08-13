@@ -25,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <StartArguments>"C:\Users\Ben Taylor\Projects\FAKE\build\FakeLib.dll" -skin "C:\Users\Ben Taylor\Projects\if-doc\if-doc\Index.nus" -out "C:\Users\Ben Taylor\Projects\FAKE\build"</StartArguments>
+    <StartArguments>"C:\Users\Ben Taylor\Projects\FAKE\build\FakeLib.dll" "C:\Users\Ben Taylor\Projects\FAKE\build\Fake.SQL.dll" "C:\Users\Ben Taylor\Projects\FAKE\build\Fake.Gallio.dll" -skin "C:\Users\Ben Taylor\Projects\if-doc\if-doc\Index.nus" -out "C:\Users\Ben Taylor\Projects\FAKE\build"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

@@ -31,12 +31,19 @@ let mapNs (namespaces:CodeModel.Namespace list) =
 let indexView (assSet:CodeModel.AssemblySet) = 
     let asses = 
         assSet.Assemblies 
+        |> List.rev //as the if-doc args parse reverses the command line order
         |> Seq.map (fun ass -> 
-            ["name", ass.Name :> obj; 
-            "namespaces", (mapNs ass.Namespaces) :> obj;] 
+            [
+            "name", ass.Name :> obj; 
+            "namespaces", (mapNs ass.Namespaces) :> obj;
+            ] 
             |> Map.ofList
         )
-    ["assemblies", asses] |> Map.ofList
+    [
+    "assemblies", asses :> obj;
+    "title", "FAKE - Build Automation for .NET" :> obj; 
+    ] 
+    |> Map.ofList
 
 let fakeViews (name:string) (assSet:CodeModel.AssemblySet) = 
     let viewMap = ["index", indexView] |> Map.ofList
