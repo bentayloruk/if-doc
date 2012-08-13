@@ -1,0 +1,33 @@
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Copyright (C) 2011 IntelliFactory
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<ivy-module version="2.0">
+  <info organisation="IntelliFactory" module="if-doc" revision="1.0" />
+  <configurations>
+    <conf name="default" />
+  </configurations>
+  <publications>
+    <artifact name="IntelliFactory.Documentation" ext="dll" type="bin" />
+    <artifact name="if-doc" ext="exe" type="bin" />
+  </publications>
+  <dependencies>
+    <dependency org="mono-project.com" name="cecil" branch="net-4.0" rev="latest.integration" />
+    <dependency org="codeplex.com" name="razor-engine" rev="latest.integration" />
+  </dependencies>
+</ivy-module>

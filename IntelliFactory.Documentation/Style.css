@@ -1,0 +1,84 @@
+/******************************************************************************
+
+Copyright (C) 2011 IntelliFactory
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+******************************************************************************/
+
+body
+{
+    font-family: Verdana;
+}
+
+a
+{
+    color: #356AA0;
+}
+
+a:visited
+{
+    color: #3F4C6B;
+}
+
+.ygtvlabel,
+.ygtvlabel:hover,
+.yui-skin-sam .yui-navset .yui-content,
+.yui-skin-sam .yui-layout .yui-layout-hd,
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd
+{
+    background: white;
+}
+
+.if-doc-close
+{
+    padding: 2px;
+    font-size: 77%;
+    vertical-align: super;
+}
+
+.if-doc-signature
+{
+    font-family: monospace;
+    padding: 0.5em;
+}
+
+.if-doc-method, .if-doc-property
+{
+    border-top: none;
+}
+
+.if-doc-documentation
+{
+    padding-left: 2em;
+    padding-bottom: 1em;
+}
+
+.if-doc-name
+{
+    font-weight: bold;
+}
+
+.if-doc-typedef
+{
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid silver;
+}
+
+.yui-skin-sam .yui-navset .yui-content,
+.yui-skin-sam .yui-navset .yui-navset-top .yui-content
+{
+    border: none;
+}

@@ -1,0 +1,277 @@
+﻿@{
+/******************************************************************************
+
+Copyright (C) 2011 IntelliFactory
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+******************************************************************************/
+}
+@{var yui = "http://yui.yahooapis.com/2.8.2r1/build";}
+@using IntelliFactory.Documentation;
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>
+            @helper Title()
+            {
+                @Html(@Model.Assemblies.Head.Name)
+                foreach (var a in @Model.Assemblies.Tail) {
+                    @Html(",")
+                    @Html(a.Name)
+                }
+            }
+            @Title()
+        </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" href="@yui/fonts/fonts-min.css" />
+        <link rel="stylesheet" type="text/css" href="@yui/resize/assets/skins/sam/resize.css" />
+        <link rel="stylesheet" type="text/css" href="@yui/layout/assets/skins/sam/layout.css" />
+        <link rel="stylesheet" type="text/css" href="@yui/treeview/assets/skins/sam/treeview.css" />
+        <link rel="stylesheet" type="text/css" href="@yui/tabview/assets/skins/sam/tabview.css" />
+        <link rel="stylesheet" type="text/css" href="Style.css" />
+        <script type="text/javascript" src="@yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="@yui/element/element-min.js"></script>
+        <script type="text/javascript" src="@yui/resize/resize-min.js"></script>
+        <script type="text/javascript" src="@yui/animation/animation-min.js"></script>
+        <script type="text/javascript" src="@yui/layout/layout-min.js"></script>
+        <script type="text/javascript" src="@yui/treeview/treeview-min.js"></script>
+        <script type="text/javascript" src="@yui/tabview/tabview-min.js"></script>
+        <script type="text/javascript" src="Style.js"></script>
+    </head>
+    <body class="yui-skin-sam">
+		<div style="hidden">
+        <div id="if-doc-top">
+            <h1>@Title()</h1>
+        </div>
+        <div id="if-doc-left">
+            <div id="if-doc-toc">
+                <ul>
+                    @helper TypeMenu(CodeModel.IType t)
+                        {
+                        <li>
+                            <div><a href="#@Id(t.Id)" class="if-doc-trigger">@Html(t.Name)</a></div>
+                            @if (!t.NestedTypes.IsEmpty)
+                            {
+                                <ul>
+                                    @foreach (var nt in t.NestedTypes)
+                                    {
+                                        @TypeMenu(nt)
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
+                    @foreach (var a in @Model.Assemblies)
+                    {
+                        <li>
+                            @Html(a.Name)
+                            <ul>
+                                @foreach (var ns in a.Namespaces)
+                                {
+                                    <li>
+                                        @Html(ns.Name)
+                                        <ul>
+                                            @foreach (var t in ns.Types)
+                                            {
+                                                @TypeMenu(t)
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div id="if-doc-center">
+            <div id="if-doc-tabs" class=yui-navset">
+            </div>
+        </div>
+        <div id="if-doc-main">
+            @foreach (var a in @Model.Assemblies)
+            {
+                foreach (var ns in a.Namespaces)
+                {
+                    foreach (var t in ns.Types)
+                    {
+                        @TypeDisplay(t)
+                    }
+                }
+            }
+        </div>
+        <em id="if-doc-tab">
+            <span class="if-doc-title"></span>
+            <span class="if-doc-close">x</span>
+        </em>
+    </body>
+</html>
+
+@helper TypeDisplay(CodeModel.IType t)
+    {
+    <div id="@Id(t.Id)" class="if-doc-type" data-title="@Html(t.Name)">
+        <h2>@Html(t.Name)</h2>
+
+        @if (t.Documentation != null)
+        {
+            @Doc(t.Documentation.Value)
+        }
+
+        @if (!t.RecordFields.IsEmpty)
+        {
+            <pre class="if-doc-summary">
+type @t.Name =
+    {
+        @foreach (var x in t.RecordFields)
+        {
+        <span>@Html(x.Name): @Type(x.Type)</span>
+        }
+    }
+            </pre>
+        }
+
+        @if (!t.UnionCases.IsEmpty)
+        {
+            <pre class="if-doc-summary">
+type @t.Name =
+    @foreach (var x in t.UnionCases)
+    {
+    <span>|</span> @Html(x.Name)
+    if (!x.Fields.IsEmpty)
+    {<span> of</span> @Type(x.Fields.Head) foreach (var f in x.Fields.Tail) {<span> * </span>@Type(f)}
+    }
+    <span></span>
+    }
+            </pre>
+        }
+
+        @foreach (var m in t.Members)
+        {
+            <div id="@Id(m.Id)" class="if-doc-member">
+                <div class="if-doc-signature">
+                    <span class="if-doc-name">
+                        @if (m.IsStatic)
+                        {@Html(m.Name)}
+                        else
+                        {<span>this.@Html(m.Name)</span>}
+                    </span>
+                    : @Type(m.Type)
+                </div>
+                @if (m.Documentation != null)
+                {
+                    @Doc(m.Documentation.Value)
+                }
+            </div>
+        }
+    </div>
+    foreach (var x in t.NestedTypes)
+    {
+        @TypeDisplay(x)
+    }
+}
+
+@helper TypeRef(CodeModel.TypeReference r)
+    {
+        if (r.Assembly != null && Model.AllTypeIds.Contains(r.Id))
+        {<a class="if-doc-trigger" href='#@Id(r.Id)'>@Html(r.DisplayName)</a>}
+        else
+        {@Html(r.DisplayName)}
+}
+
+@helper Type(CodeModel.Type t)
+    {<span class="if-doc-type"
+        >@foreach (var x in t.Tokens)
+         {
+             if (x.IsReferenceToken)
+             {@TypeRef(((CodeModel.TypeToken.ReferenceToken)x).Item)}
+             else
+             {@Html(((CodeModel.TypeToken.TextToken)x).Item)}
+         }</span>}
+
+@helper Doc(XmlDoc.Node node)
+    {
+    <div class="if-doc-documentation">
+        @node.Summary
+        @if (node.Remarks != null)
+        {
+            @node.Remarks.Value
+        }
+        <dl>
+        @if (node.TypeParameters.Count > 0)
+        {
+            <dt>Type Parameters</dt>
+            <dd>
+                <dl>
+                @foreach (var kv in node.TypeParameters)
+                {
+                    <dt>'@Html(kv.Key)</dt>
+                    <dd>@kv.Value</dd>
+                }
+                </dl>
+            </dd>
+        }
+        @if (node.Parameters.Count > 0)
+        {
+            <dt>Parameters</dt>
+            <dd>
+                <dl>
+                @foreach (var kv in node.Parameters)
+                {
+                    <dt>@Html(kv.Key)</dt>
+                    <dd>@kv.Value</dd>
+                }
+                </dl>
+            </dd>
+        }
+        @if (node.Returns != null)
+        {
+            <dt>Returns</dt>
+            <dd>@node.Returns.Value</dd>
+        }
+        @if (node.Exceptions.Count > 0)
+        {
+            <dt>Exceptions</dt>
+            <dd>
+                <dl>
+                @foreach (var kv in node.Exceptions)
+                {
+                    <dt><a class="if-doc-trigger" href="#@Id(kv.Key)" title="@kv.Key.FullName">@kv.Key.Name</a></dt>
+                    <dd>@kv.Value</dd>
+                }
+                </dl>
+            </dd>
+        }
+        @if (!node.SeeAlso.IsEmpty)
+        {
+            <dt>See also</dt>
+            <dd>
+                <ul>
+                    @foreach (var x in node.SeeAlso)
+                    {
+                        <li><a class="if-doc-trigger" href="#@Id(x)" title="@x.FullName">@x.Name</a></li>
+                    }
+                </ul>
+            </dd>
+        }
+        </dl>
+    </div>
+}
+
+
+@helper Id(XmlDoc.Id id)
+    { @View.IdEncode(id.ToString())}
+
+@helper Html(string x)
+    { @(View.HtmlEncode(x))}
