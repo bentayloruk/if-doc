@@ -1,0 +1,62 @@
+﻿@using IntelliFactory.Documentation;
+<!DOCTYPE html">
+<html lang="en">
+    <head>
+        <title>
+            @helper Title()
+            {
+                @Html("FAKE - Build Automation for .NET")
+            }
+            @Title()
+        </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row-fluid span12"><h1>@Title()</h1></div>
+            <div class="row-fluid span4"></div>
+            <div class="row-fluid span8">
+            @foreach (var a in @Model.Assemblies)
+            {
+                    foreach (var ns in a.Namespaces)
+                    {
+                            <h2 style="clear: left">@Html(ns.Name)</h2>
+                            <ul class="unstyled">
+                            @foreach (var t in ns.Types.Where(t => t.Name.EndsWith(@"Helper")))
+                            {
+                                @HelperSummary(t)
+                            }
+                            </ul>
+                    }
+            }
+            </div>
+        </div>
+    </body>
+</html>
+
+<div class="modal hide" id="type-modal"><div class="modal-body">WOrd</div></div>
+@helper HelperSummary(CodeModel.IType t)
+{
+    <li>
+    <h3>@t.Name.Replace("Helper", "")</h3>
+    <ul class="unstyled">
+    @foreach (var m in t.Members.OfType<CodeModel.ModuleMethod>().Cast<CodeModel.IMember>().Where(m => Char.IsUpper(m.Name[0])))
+    {
+    <li>
+    <a href="#type-modal" data-toggle="modal">@if (m.IsStatic) {@Html(m.Name)} else {<span>this.@Html(m.Name)</span>}</a>
+    </li>
+    }
+    </ul>
+    </li>
+}
+    
+@helper Id(XmlDoc.Id id)
+    { @View.IdEncode(id.ToString())}
+
+@helper Html(string x)
+    { @(View.HtmlEncode(x))}

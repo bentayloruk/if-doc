@@ -23,8 +23,8 @@ namespace IntelliFactory.Documentation
 module CodeModel =
     open System
     open System.Collections.Generic
+    open System.Diagnostics
     
-
     /// Represents documentation parsed from XML comments.
     type Documentation = XmlDoc.Node
 
@@ -290,6 +290,7 @@ module CodeModel =
         abstract member Kind : TypeKind
 
     /// Represents union types.
+    [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type Union =
         {
             Name : string
@@ -324,6 +325,7 @@ module CodeModel =
             member this.Kind = TypeKind.Union
 
     /// Represents record types.
+    [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type Record =
         {
             Name : string
@@ -359,6 +361,7 @@ module CodeModel =
             member this.Kind = TypeKind.Record
 
     /// Represents module let-bound properties.
+    [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type ModuleProperty =
         {
             Name : string
@@ -377,6 +380,7 @@ module CodeModel =
             member this.Documentation = this.Documentation
 
     /// Represents module let-bound methods.
+    [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type ModuleMethod =
         {
             Name : string
@@ -398,6 +402,7 @@ module CodeModel =
             member this.Documentation = this.Documentation
 
     /// Represents classes.
+    [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type Class =
         {
             Name : string
@@ -442,6 +447,7 @@ module CodeModel =
             member this.Kind = TypeKind.Class
 
     /// Represents interfaces.
+    [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type Interface =
         {
             Name : string
@@ -475,6 +481,7 @@ module CodeModel =
             member this.Kind = TypeKind.Interface
 
     /// Represents F# modules.
+    [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type Module =
         {
             Name : string
@@ -547,6 +554,7 @@ module CodeModel =
         | ModuleMember of Module
 
     /// Represents namespaces.
+    [<DebuggerDisplay("Name:{Name}")>]
     type Namespace =
         {
             Name : string
@@ -577,6 +585,7 @@ module CodeModel =
             ]
 
     /// Represents assemblies.
+    [<DebuggerDisplay("Name:{Name}")>]
     type Assembly =
         {
             Name : string

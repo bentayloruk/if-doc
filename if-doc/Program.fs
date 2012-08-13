@@ -21,15 +21,16 @@ open System.Diagnostics
 open System.IO
 open System.Reflection
 open Mono.Cecil
-open RazorEngine
 open IntelliFactory.Documentation
+open Nustache.Core
+open FakeModels
 
 /// Represents parsed command-line arguments.
 type Arguments =
     {
         AssemblySet : CodeModel.AssemblySet
         OutputPath : string
-        RazorSkin : option<string>
+        SkinPaths : string list 
     }
 
 /// The trace source object for diagnostics.
@@ -66,42 +67,12 @@ let TryReadAssembly (path: string) =
                 XmlDoc.Document.Empty
         CodeParser.ParseAssembly def doc)
 
-/// Tries to compile a Razor template.
-let TryCompileRazor<'T> (name: string) (template: string) =
-    try
-        Razor.Compile(template, typeof<'T>, name)
-        true
-    with
-    | :? Templating.TemplateCompilationException as e ->
-        for x in e.Errors do
-            TraceError 2 x
-        false
-    | :? Templating.TemplateParsingException as e ->
-        let msg = sprintf "Line:%u Col:%u Exception:%s" e.Line e.Column (e.ToString())
-        TraceError 4 msg 
-        false
-    | e ->
-        TraceError 3 e
-        false
-
-let compile<'T> name template =
-    let a = typeof<XmlDoc.Document>.Assembly
-    use r = new StreamReader(a.GetManifestResourceStream template)
-    if TryCompileRazor<'T> name (r.ReadToEnd()) then
-        Some name
-    else
-        None
-
-
-/// Compiles the default Razor template.
-let YuiRazorSkin = compile<CodeModel.AssemblySet> "default" "Style.cshtml"
-
 /// Prints usage information.
 let Usage () =
     eprintfn "Usage: if-doc.exe [assemblies]"
     eprintfn "Arguments:"
     eprintfn "    -out path    Sets the output path."
-    eprintfn "    -skin path   Sets the Razor skin."
+    eprintfn "    -skin path   Sets a skin (supports multiple)."
 
 /// Parses command-line arguments.
 let Parse (args: seq<string>) =
@@ -110,21 +81,12 @@ let Parse (args: seq<string>) =
             res
         | "-out" :: path :: paths ->
             parse { res with OutputPath = path } paths
-        | [path] as paths when res.OutputPath = null ->
-            let path = Path.GetFullPath path
-            let op   = Path.Combine(Path.GetDirectoryName path, "api.html")
-            let res  = { res with OutputPath = op }
-            parse res paths
         | "-skin" :: path :: paths ->
             if File.Exists path then
-                if TryCompileRazor "user" (File.ReadAllText path) then
-                    parse { res with RazorSkin = Some "user" } paths
-                else
-                    eprintfn "Ignoring invalid Razor template: %s" path
-                    parse res paths
+                parse { res with SkinPaths = path :: res.SkinPaths } paths
             else
-                eprintfn "Ignoring invalid path: %s" path
-                parse res paths
+                eprintfn "Skin file does not exist at path: %s" path
+                failwith "Bad skin path"
         | path :: paths ->
             if File.Exists path then
                 match TryReadAssembly path with
@@ -135,16 +97,16 @@ let Parse (args: seq<string>) =
                     let res = { res with AssemblySet = CodeModel.AssemblySet(assemblies) }
                     parse res paths
             else
-                eprintfn "Ignoring invalid path: %s" path
-                parse res paths
+                eprintfn "Assembly path does not exist: %s" path
+                failwith "Bad skin path"
     let def =
         {
             OutputPath = null
             AssemblySet = CodeModel.AssemblySet([])
-            RazorSkin = YuiRazorSkin
+            SkinPaths = []
         }
-    Seq.toList args
-    |> parse def
+    let opts = Seq.toList args |> parse def
+    if opts.OutputPath = null then failwith "Out path not specified." else opts
 
 /// The main program entry point.
 [<EntryPoint>]
@@ -152,27 +114,26 @@ let Main args =
     
     let (++) a b = Path.Combine(a, b)
 
-    if YuiRazorSkin.IsNone then
-        eprintfn "Internal error: invalid default Razor skin."
+    let opts = Parse args
+    if opts.AssemblySet.Assemblies.IsEmpty then
+        eprintfn "No assemblies given."
+        Usage ()
         1
     else
-        let opts = Parse args
-        let skin = opts.RazorSkin.Value
-        if opts.AssemblySet.Assemblies.IsEmpty then
-            eprintfn "No assemblies given."
-            Usage ()
-            1
-        else
-            try
-                let path = Path.GetFullPath opts.OutputPath
-                let dir = Path.GetDirectoryName path
-                if not (Directory.Exists dir) then
-                    Directory.CreateDirectory dir
-                    |> ignore
-                let res = Razor.Run(skin, opts.AssemblySet)
-                File.WriteAllText(path, res)
+        try
+            let dir = opts.OutputPath
+            if not (Directory.Exists dir) then
+                Directory.CreateDirectory dir
+                |> ignore
 
-                0
-            with e ->
-                eprintfn "Internal error."
-                1
+            for skinPath in opts.SkinPaths do
+                let model = fakeViews (Path.GetFileNameWithoutExtension(skinPath)) opts.AssemblySet
+                let renderPath = 
+                    let newFileName = Path.GetFileNameWithoutExtension(skinPath) + ".html"
+                    Path.Combine(dir, newFileName)
+                Render.FileToFile(skinPath, model, renderPath)
+            0
+        with e ->
+            eprintfn "Internal error %s." e.Message
+            let _ = System.Console.ReadLine()
+            1

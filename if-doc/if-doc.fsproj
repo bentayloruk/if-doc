@@ -25,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <StartArguments>FSharp.Core.dll IntelliFactory.Documentation.dll</StartArguments>
+    <StartArguments>"C:\Users\Ben Taylor\Projects\FAKE\build\FakeLib.dll" -skin "C:\Users\Ben Taylor\Projects\if-doc\if-doc\Index.nus" -out "C:\Users\Ben Taylor\Projects\FAKE\build"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,11 +39,13 @@
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <ItemGroup>
+    <Compile Include="FakeModels.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Index.nus" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Mono.Cecil">
@@ -66,9 +68,8 @@
     <Reference Include="FSharp.Core">
       <Private>True</Private>
     </Reference>
-    <Reference Include="RazorEngine">
-      <HintPath>..\packages\RazorEngine.3.0.8\lib\net40\RazorEngine.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Nustache.Core">
+      <HintPath>..\..\Nustache\Nustache.Core\bin\Debug\Nustache.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -79,10 +80,6 @@
       <Private>True</Private>
     </ProjectReference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Razor">
-      <HintPath>..\packages\RazorEngine.3.0.8\lib\net40\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
