@@ -15,7 +15,16 @@ let isDocableMember (m:CodeModel.IMember) =
 let mapMembers (members:CodeModel.IMember seq) =
     members 
     |> Seq.filter isDocableMember 
-    |> Seq.map (fun x -> ["name", x.Name :> obj; "summary", x.Documentation.Value.Summary.Replace("div", "span") :> obj] |> Map.ofList)
+    |> Seq.map (fun x -> 
+        //TODO stop if-doc from html-izing in the first place
+        let summary = x.Documentation.Value.Summary.Replace("div", "span") 
+        let argJoiner (args:_ seq) = String.Join("<br/>", args)
+        let ps = x.Documentation.Value.Parameters |> Seq.map (fun p -> p.Key + " " + p.Value) |> argJoiner
+        [
+        "name", x.Name :> obj;
+        "summary", summary :> obj
+        "params", ps :> obj
+        ] |> Map.ofList)
 
 let mapTypes (types:CodeModel.IType seq) =
     types 
@@ -26,7 +35,10 @@ let mapTypes (types:CodeModel.IType seq) =
     
 let mapNs (namespaces:CodeModel.Namespace list) =
     namespaces 
-    |> Seq.map (fun x -> ["name", x.Name :> obj; "types", (mapTypes x.Types) :> obj;] |> Map.ofList)
+    |> Seq.map (fun x -> 
+        let docTypes = (mapTypes x.Types)
+        //let nonDocTypes = x.Types |> Seq.filter (fun t -> docTypes |> Seq.exists (fun dt -> dt.Id = t.Id) )
+        ["name", x.Name :> obj; "types", docTypes :> obj;] |> Map.ofList)
 
 let indexView (assSet:CodeModel.AssemblySet) = 
     let asses = 

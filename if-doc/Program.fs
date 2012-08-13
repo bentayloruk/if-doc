@@ -131,7 +131,8 @@ let Main args =
                 let renderPath = 
                     let newFileName = Path.GetFileNameWithoutExtension(skinPath) + ".html"
                     Path.Combine(dir, newFileName)
-                Render.FileToFile(skinPath, model, renderPath)
+                let render = Render.FileToString(skinPath, model)
+                File.WriteAllText(renderPath, render)
             0
         with e ->
             eprintfn "Internal error %s." e.Message
