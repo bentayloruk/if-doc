@@ -286,6 +286,7 @@ module XmlDoc =
     /// Represents parsed XML documentation node.
     type Node =
         {
+            IsUserDoc : bool
             Summary : Html
             Remarks : option<Html>
             Parameters : IDictionary<string,Html>
@@ -298,6 +299,7 @@ module XmlDoc =
         /// Constructs a simple Documentation value based on a summary.
         static member Default(summary: string) =
             {
+                IsUserDoc = false
                 Summary = HttpUtility.HtmlEncode summary
                 Remarks = None
                 Parameters = Dictionary()
@@ -332,6 +334,10 @@ module XmlDoc =
                         e.SetAttributeValue(!"class", "if-doc-link")
                     x.ToString()
                 {
+                    IsUserDoc = 
+                        match find "user" with
+                        | [] -> false 
+                        | x :: _ -> true 
                     Summary =
                         match find "summary" with
                         | [] -> HttpUtility.HtmlEncode rawXml

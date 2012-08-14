@@ -3,14 +3,8 @@ open IntelliFactory.Documentation
 open System.Collections.Generic
 open System
 
-let (memberFilters:(CodeModel.IMember->bool) list) = [
-    (fun m -> m.Documentation.IsNone);
-    (fun m -> String.IsNullOrEmpty(m.Documentation.Value.Summary));//hack as option can be null?
-    (fun m -> Char.IsLower(m.Name.[0]));
-]
-
 let isDocableMember (m:CodeModel.IMember) = 
-    not (memberFilters |> Seq.exists (fun mf -> mf m))
+    m.Documentation.IsSome && m.Documentation.Value.IsUserDoc
 
 let mapMembers (members:CodeModel.IMember seq) =
     members 

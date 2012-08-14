@@ -17,14 +17,13 @@
             <div class="row-fluid span8">
 			{{#assemblies}}
 				{{#namespaces}}
-					<h2 style="clear: left">{{name}}</h2>
 					{{#types}}
 						<ul class="unstyled">
 						<li>
 							<h3>{{name}}</h3>
 							<ul class="unstyled">
 								{{#functions}}
-								<li><a class="type-link" href="#" rel="popover" data-content=" {{params}} " data-original-title="{{name}}">{{name}}</a>{{{summary}}}</li>
+								<li><a class="type-link" href="#" rel="popover" data-content=" {{params}} " data-original-title="{{name}}">{{name}}</a> {{{summary}}}</li>
 								{{/functions}}
 							</ul>
 						</li>
