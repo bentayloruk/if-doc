@@ -23,7 +23,7 @@
 							<h3>{{name}}</h3>
 							<ul class="unstyled">
 								{{#functions}}
-								<li><a class="type-link" href="#" rel="popover" data-content=" {{params}} " data-original-title="{{name}}">{{name}}</a> {{{summary}}} {{typesum}}</li>
+								<li><a class="type-link" href="#" rel="popover" data-content=" {{params}} " data-original-title="{{name}}">{{name}}</a> {{{summary}}} <code>{{name}} : {{{typesum}}}</code></li>
 								{{/functions}}
 							</ul>
 						</li>

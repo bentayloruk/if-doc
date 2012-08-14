@@ -16,6 +16,7 @@ let mapMembers (members:CodeModel.IMember seq) =
 
         //Join the param name (from docs) and the param type (from Cecil) together.  
         //TODO move this into original parse?
+        (*
         let docParams = 
             x.Type.Tokens 
             |> Seq.choose (function 
@@ -24,7 +25,9 @@ let mapMembers (members:CodeModel.IMember seq) =
             |> Seq.zip x.Documentation.Value.OrderedParameters
             |> Seq.map (fun (tr, param) -> "(" + tr.ToString() + ":" + param.DisplayName + ")")
             |> List.ofSeq
+            *)
 
+            (*
         let typesum = 
             x.Type.Tokens 
             |> (Seq.fold (fun (refTokenIndex, accText) token ->
@@ -40,7 +43,36 @@ let mapMembers (members:CodeModel.IMember seq) =
                             accText + ref.DisplayName
                     (refTokenIndex + 1, text)
             ) (0, ""))
+            *)
 
+
+        let typesum = 
+            match x with 
+            | :? CodeModel.ModuleMethod as mm -> 
+                mm.Parameters 
+                |> Seq.fold (fun acc param ->
+                    let rec typeDisplay = function
+                        | CodeModel.Type.ConcreteType(tr) -> tr.DisplayName
+                        | CodeModel.Type.FunctionType(t1, t2) -> "(" + typeDisplay t1 + " -> " + typeDisplay t2 + ")"//not convinced about my bracketing here.
+                        | _ -> "TBD"
+                    let text = typeDisplay param.Type
+                    (*
+                    | InferredType
+                    | ConcreteType of TypeReference
+                    | ArrayType of Type * int
+                    | PointerType of Type
+                    | ByReferenceType of Type
+                    | GenericType of TypeReference * list<Type>
+                    | ClassParameterType of GenericParameter
+                    | MethodParameterType of GenericParameter
+                    | TupleType of list<Type>
+                    | FunctionType of Type * Type
+                    | OptionalParameterType of Type
+                    | UnitType
+                    *)
+                    acc + param.Name + ":<span style='color:gray'>" + text + "</span> "
+                ) ""
+            | _ -> ""
 
         let ps = 
             x.Documentation.Value.Parameters 
