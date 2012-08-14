@@ -290,6 +290,7 @@ module XmlDoc =
             Summary : Html
             Remarks : option<Html>
             Parameters : IDictionary<string,Html>
+            OrderedParameters : string list 
             TypeParameters : IDictionary<string,Html>
             Returns : option<Html>
             Exceptions : IDictionary<Id,Html>
@@ -303,6 +304,7 @@ module XmlDoc =
                 Summary = HttpUtility.HtmlEncode summary
                 Remarks = None
                 Parameters = Dictionary()
+                OrderedParameters = []
                 TypeParameters = Dictionary()
                 Returns = None
                 Exceptions = Dictionary()
@@ -317,6 +319,7 @@ module XmlDoc =
                 let find name =
                     doc.Descendants(XName.Get name)
                     |> Seq.toList
+                //BT This read function also writes. Destructive.  Prevents us from reading from the same XML for different record props :(.
                 let read (x: XElement) : Html =
                     let n = x.Name.LocalName
                     x.Name <- !"div"
@@ -346,6 +349,14 @@ module XmlDoc =
                         match find "remarks" with
                         | [] -> None
                         | x :: _ -> Some (read x)
+                    OrderedParameters =
+                        //BT this has to be before Parameters as Parameters is desctructive with the XML.  Fix later.
+                        //OrderedParameters is not destructive so OK to go first.
+                        let oops = 
+                            find "param" 
+                            |> Seq.map (fun p -> p.Attribute(!"name").Value)
+                            |> List.ofSeq
+                        oops
                     Parameters =
                         let d = Dictionary()
                         for p in find "param" do

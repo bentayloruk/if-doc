@@ -10,17 +10,37 @@ let mapMembers (members:CodeModel.IMember seq) =
     members 
     |> Seq.filter isDocableMember 
     |> Seq.map (fun x -> 
-        //TODO stop if-doc from html-izing in the first place?
-        let summary = x.Documentation.Value.Summary.Replace("div", "span") 
         let join separator (args:_ seq) = String.Join(separator, args)
+
+        let summary = x.Documentation.Value.Summary.Replace("div", "span") 
+
+        //Join the param name (from docs) and the param type (from Cecil) together.  
+        //TODO move this into original parse?
+        let docParams = 
+            x.Type.Tokens 
+            |> Seq.choose (function 
+                | CodeModel.TypeToken.ReferenceToken(tr) -> Some(tr) 
+                | _ -> None)
+            |> Seq.zip x.Documentation.Value.OrderedParameters
+            |> Seq.map (fun (tr, param) -> "(" + tr.ToString() + ":" + param.DisplayName + ")")
+            |> List.ofSeq
+
         let typesum = 
             x.Type.Tokens 
-            |> Seq.map (fun t -> 
-                match t with 
-                | CodeModel.TypeToken.TextToken(text) -> text
-                | CodeModel.TypeToken.ReferenceToken(ref) -> ref.DisplayName 
-                )
-            |> (join " ")
+            |> (Seq.fold (fun (refTokenIndex, accText) token ->
+                match token with 
+                | CodeModel.TypeToken.TextToken(text) -> 
+                    (refTokenIndex, accText + text)
+                | CodeModel.TypeToken.ReferenceToken(ref) -> 
+                    let text = 
+                        if refTokenIndex <= docParams.Length then
+                            accText + docParams.Item refTokenIndex
+                        else
+                            //This should only happen for return type.  Put check in.
+                            accText + ref.DisplayName
+                    (refTokenIndex + 1, text)
+            ) (0, ""))
+
 
         let ps = 
             x.Documentation.Value.Parameters 
