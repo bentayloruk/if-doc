@@ -10,15 +10,30 @@ let mapMembers (members:CodeModel.IMember seq) =
     members 
     |> Seq.filter isDocableMember 
     |> Seq.map (fun x -> 
-        //TODO stop if-doc from html-izing in the first place
+        //TODO stop if-doc from html-izing in the first place?
         let summary = x.Documentation.Value.Summary.Replace("div", "span") 
-        let argJoiner (args:_ seq) = String.Join("<br/>", args)
-        let ps = x.Documentation.Value.Parameters |> Seq.map (fun p -> p.Key + " " + p.Value) |> argJoiner
+        let join separator (args:_ seq) = String.Join(separator, args)
+        let typesum = 
+            x.Type.Tokens 
+            |> Seq.map (fun t -> 
+                match t with 
+                | CodeModel.TypeToken.TextToken(text) -> text
+                | CodeModel.TypeToken.ReferenceToken(ref) -> ref.DisplayName 
+                )
+            |> (join " ")
+
+        let ps = 
+            x.Documentation.Value.Parameters 
+            |> Seq.map (fun p -> p.Key + " " + p.Value) 
+            |> (join "<br/>")
+
         [
         "name", x.Name :> obj;
         "summary", summary :> obj
         "params", ps :> obj
-        ] |> Map.ofList)
+        "typesum", typesum :> obj
+        ] |> Map.ofList
+        )
 
 let mapTypes (types:CodeModel.IType seq) =
     types 
