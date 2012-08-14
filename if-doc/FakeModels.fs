@@ -14,38 +14,6 @@ let mapMembers (members:CodeModel.IMember seq) =
 
         let summary = x.Documentation.Value.Summary.Replace("div", "span") 
 
-        //Join the param name (from docs) and the param type (from Cecil) together.  
-        //TODO move this into original parse?
-        (*
-        let docParams = 
-            x.Type.Tokens 
-            |> Seq.choose (function 
-                | CodeModel.TypeToken.ReferenceToken(tr) -> Some(tr) 
-                | _ -> None)
-            |> Seq.zip x.Documentation.Value.OrderedParameters
-            |> Seq.map (fun (tr, param) -> "(" + tr.ToString() + ":" + param.DisplayName + ")")
-            |> List.ofSeq
-            *)
-
-            (*
-        let typesum = 
-            x.Type.Tokens 
-            |> (Seq.fold (fun (refTokenIndex, accText) token ->
-                match token with 
-                | CodeModel.TypeToken.TextToken(text) -> 
-                    (refTokenIndex, accText + text)
-                | CodeModel.TypeToken.ReferenceToken(ref) -> 
-                    let text = 
-                        if refTokenIndex <= docParams.Length then
-                            accText + docParams.Item refTokenIndex
-                        else
-                            //This should only happen for return type.  Put check in.
-                            accText + ref.DisplayName
-                    (refTokenIndex + 1, text)
-            ) (0, ""))
-            *)
-
-
         let typesum = 
             match x with 
             | :? CodeModel.ModuleMethod as mm -> 
