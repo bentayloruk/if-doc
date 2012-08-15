@@ -15,13 +15,17 @@ let mapMembers (members:CodeModel.IMember seq) =
         let summary = x.Documentation.Value.Summary.Replace("div", "span") 
 
         let typesum = 
+            //TODO use the tokens pretty print instead of this hack.
             match x with 
             | :? CodeModel.ModuleMethod as mm -> 
                 mm.Parameters 
                 |> Seq.fold (fun acc param ->
                     let rec typeDisplay = function
                         | CodeModel.Type.ConcreteType(tr) -> tr.DisplayName
-                        | CodeModel.Type.FunctionType(t1, t2) -> "(" + typeDisplay t1 + " -> " + typeDisplay t2 + ")"//not convinced about my bracketing here.
+                        | CodeModel.Type.FunctionType(t1, t2) -> 
+                            //if x.Documentation.Value.Defs.ContainsKey(param.Name) then
+                            //   "Yo" |> ignore
+                            "(" + typeDisplay t1 + " -> " + typeDisplay t2 + ")"//not convinced about my bracketing here.
                         | _ -> "TBD"
                     let text = typeDisplay param.Type
                     (*
@@ -38,7 +42,9 @@ let mapMembers (members:CodeModel.IMember seq) =
                     | OptionalParameterType of Type
                     | UnitType
                     *)
-                    acc + param.Name + ":<span style='color:gray'>" + text + "</span> "
+                    let paramComments = x.Documentation.Value.Parameters.[param.Name]
+                    let xxx = sprintf "<span rel='popover' data-content='%s' data-original-title='%s'>%s</span>" paramComments text param.Name
+                    acc + xxx + ":<span style='color:gray'>" + text + "</span> "
                 ) ""
             | _ -> ""
 

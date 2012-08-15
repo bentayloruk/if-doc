@@ -289,8 +289,8 @@ module XmlDoc =
             IsUserDoc : bool
             Summary : Html
             Remarks : option<Html>
+            Defs : IDictionary<string,string>
             Parameters : IDictionary<string,Html>
-            OrderedParameters : string list 
             TypeParameters : IDictionary<string,Html>
             Returns : option<Html>
             Exceptions : IDictionary<Id,Html>
@@ -303,8 +303,8 @@ module XmlDoc =
                 IsUserDoc = false
                 Summary = HttpUtility.HtmlEncode summary
                 Remarks = None
+                Defs = Dictionary()
                 Parameters = Dictionary()
-                OrderedParameters = []
                 TypeParameters = Dictionary()
                 Returns = None
                 Exceptions = Dictionary()
@@ -349,6 +349,15 @@ module XmlDoc =
                         match find "remarks" with
                         | [] -> None
                         | x :: _ -> Some (read x)
+                    //BT Defs has to be before Parameters as the latter is destructive to the XML (not my choice).
+                    Defs = 
+                        let d = Dictionary()
+                        for p in find "param" do
+                            let att = p.Attribute(!"def")
+                            if att <> null then
+                                let n = p.Attribute(!"name").Value
+                                d.[n] <- att.Value
+                        d
                     Parameters =
                         let d = Dictionary()
                         for p in find "param" do

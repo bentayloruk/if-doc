@@ -12,26 +12,32 @@
     </head>
     <body>
         <div class="container-fluid">
-            <div class="row-fluid span12">
-			<h1>{{title}}</h1>
-			<p>FAKE is a build automation system for .NET and Mono.  This is the FAKE documentation.</p>
-			{{#assemblies}}
-				{{#namespaces}}
-					{{#types}}
-						<ul class="unstyled">
-						<li>
-							<h3>{{name}}</h3>
-							<ul class="unstyled">
-								{{#functions}}
-								<li><a class="type-link" href="#" rel="popover" data-content=" {{params}} " data-original-title="{{name}}">{{name}}</a> {{{summary}}} <code>{{name}} : {{{typesum}}}</code></li>
-								{{/functions}}
-							</ul>
-						</li>
-					{{/types}}
-				{{/namespaces}}
-				<hr/>
-			{{/assemblies}}
-            </div>
+            <div class="row-fluid"> </div>
+            <div class="row-fluid">
+				<div class="span10 offset1">
+				<h1>{{title}}</h1>
+				<p>FAKE is a build automation system for .NET and Mono.  This is the FAKE documentation.</p>
+				{{#assemblies}}
+					{{#namespaces}}
+						{{#types}}
+<div class="well">
+<ul class="unstyled">
+<li>
+<h3 style="margin-top:20px; color:gray">{{name}} Functions</h3>
+<ul class="unstyled">
+{{#functions}}
+<li><a class="type-link" href="#{{name}}">{{name}}</a> : <code>{{{typesum}}}</code></li>
+{{{summary}}} 
+{{/functions}}
+</ul>
+</li>
+</div>
+						{{/types}}
+					{{/namespaces}}
+					<hr/>
+				{{/assemblies}}
+				</div>
+			</div>
         </div>
     </body>
 	<script type="text/javascript">

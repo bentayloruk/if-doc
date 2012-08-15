@@ -154,6 +154,7 @@ module CodeModel =
             |> Seq.toList
 
     /// Represents method parameters.
+    [<DebuggerDisplayAttribute("Name:{Name}")>]
     type Parameter =
         {
             Name : string
