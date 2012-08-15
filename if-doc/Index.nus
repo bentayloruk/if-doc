@@ -1,4 +1,4 @@
-<!DOCTYPE html">
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <title>{{title}}</title>
@@ -20,22 +20,24 @@
 				{{#assemblies}}
 					{{#namespaces}}
 						{{#types}}
-<div class="well">
-<ul class="unstyled">
-<li>
-<h3 style="margin-top:20px; color:gray">{{name}} Functions</h3>
-<ul class="unstyled">
-{{#functions}}
-<li><a class="type-link" href="#{{name}}">{{name}}</a> : <code>{{{typesum}}}</code></li>
-{{{summary}}} 
-{{/functions}}
-</ul>
-</li>
-</div>
+							<div class="well">
+								<ul class="unstyled">
+								<li>
+									<h3 style="margin-top:20px; color:gray">{{name}} Functions</h3>
+									<ul class="unstyled">
+									{{#functions}}
+									<li><a class="type-link" href="#{{name}}">{{name}}</a> : <code>{{{typesum}}}</code></li>
+									{{{summary}}} 
+									{{/functions}}
+									</ul>
+								</li>
+								</ul>
+							</div>
 						{{/types}}
 					{{/namespaces}}
 					<hr/>
 				{{/assemblies}}
+				Documentation created by this <a href="https://github.com/bentayloruk/if-doc">if-doc</a> fork.
 				</div>
 			</div>
         </div>

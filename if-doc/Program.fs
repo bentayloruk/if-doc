@@ -130,7 +130,7 @@ let Main args =
                 let model = fakeViews (Path.GetFileNameWithoutExtension(skinPath)) opts.AssemblySet
                 let renderPath = 
                     let newFileName = Path.GetFileNameWithoutExtension(skinPath) + ".html"
-                    Path.Combine(dir, newFileName)
+                    Path.Combine(dir, newFileName).ToLower()
                 let render = Render.FileToString(skinPath, model)
                 File.WriteAllText(renderPath, render)
             0
