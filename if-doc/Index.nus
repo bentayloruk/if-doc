@@ -51,7 +51,8 @@
 									<ul class="unstyled">
 										{{#functions}}
 										<li class="function">
-											<a class="type-link" name="{{name}}">{{name}}</a> {{{summary}}}.  <em>Params</em>: <code>{{{typesum}}}</code>
+											<a class="type-link" href="#{{name}}" name="{{name}}">{{name}}</a> {{{summary}}}.  <em>Params</em>: <code>{{{typesum}}}</code>
+											<!--<br/>{{tokentext}}-->
 										</li>
 										{{/functions}}
 									</ul>
@@ -60,7 +61,6 @@
 							</div>
 						{{/types}}
 					{{/namespaces}}
-					<hr/>
 				{{/assemblies}}
 				Documentation created by this <a href="https://github.com/bentayloruk/if-doc">if-doc</a> fork.
 				</div>

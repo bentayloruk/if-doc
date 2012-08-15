@@ -57,7 +57,6 @@
     <Compile Include="CodeModel.fs" />
     <Compile Include="CodeParser.fs" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="StyleFake.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Mono.Cecil">
