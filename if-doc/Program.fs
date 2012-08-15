@@ -128,10 +128,9 @@ let Main args =
 
             for skinPath in opts.SkinPaths do
                 let model = fakeViews (Path.GetFileNameWithoutExtension(skinPath)) opts.AssemblySet
-                let renderPath = 
-                    let newFileName = Path.GetFileNameWithoutExtension(skinPath) + ".html"
-                    Path.Combine(dir, newFileName).ToLower()
-                let render = Render.FileToString(skinPath, model)
+                let newFileName = (Path.GetFileNameWithoutExtension(skinPath) + ".html").ToLower()
+                let renderPath = Path.Combine(dir, newFileName).ToLower()
+                let render = Render.FileToString(skinPath, model.Add("filename", newFileName))
                 File.WriteAllText(renderPath, render)
             0
         with e ->

@@ -42,7 +42,12 @@ let mapMembers (members:CodeModel.IMember seq) =
                     | OptionalParameterType of Type
                     | UnitType
                     *)
-                    let paramComments = x.Documentation.Value.Parameters.[param.Name]
+                    let paramComments = 
+                        let paramComments = x.Documentation.Value.Parameters;
+                        if paramComments.ContainsKey(param.Name) then
+                            paramComments.[param.Name]
+                        else "Comments for this parameter are missing."
+                            
                     let xxx = sprintf "<span rel='popover' data-content='%s' data-original-title='%s'>%s</span>" paramComments text param.Name
                     acc + xxx + ":<span style='color:gray'>" + text + "</span> "
                 ) ""
