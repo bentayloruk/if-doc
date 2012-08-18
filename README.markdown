@@ -1,3 +1,9 @@
+# README First
+
+This is a fork of if-doc which I've hacked up to generate user documentation for FAKE.  You can see an example here http://bentaylor.org/fake/fake-index.html
+
+-- START OF ORIGINAL README --
+
 # if-doc
 
 ## Summary
