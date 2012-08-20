@@ -49,8 +49,21 @@ let makeMemberMap (mem:CodeModel.IMember) =
     let summary = doc.Summary.Replace("div", "span") 
     let typesum = 
         match mem with 
-        | :? CodeModel.ModuleMethod as mm -> summariseModuleMethod mm doc
+        | :? CodeModel.ModuleMethod as mm -> 
+            summariseModuleMethod mm doc
         | _ -> ""
+    let url = 
+        match mem with 
+        | :? CodeModel.ModuleMethod as mm when mm.Source.IsSome -> 
+            //C:\Users\Ben Taylor\Projects\FAKE\src\app\FakeLib\FileHelper.fs
+            let url = 
+                let index = mm.Source.Value.Url.IndexOf("\\src\\") + 1
+                let relative = mm.Source.Value.Url.Substring(index).Replace("\\", "/")
+                //TODO this hack-fest will break on MONO.
+                let hackedLn = if mm.Source.Value.LineNumber = 0 then 0 else (mm.Source.Value.LineNumber - 1)
+                "https://github.com/fsharp/FAKE/blob/develop/" + relative + "#L" + hackedLn.ToString()
+            url 
+        | _ -> "" 
     let tokenText = 
         mem.Type.Tokens 
         |> Seq.fold (fun acc token ->
@@ -63,6 +76,7 @@ let makeMemberMap (mem:CodeModel.IMember) =
         "summary", summary :> obj
         "typesum", typesum :> obj
         "tokentext", tokenText :> obj
+        "sourceUrl", url :> obj
     ] 
     |> Map.ofList
 

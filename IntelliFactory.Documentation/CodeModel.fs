@@ -380,6 +380,10 @@ module CodeModel =
             member this.IsStatic = true
             member this.Documentation = this.Documentation
 
+    type SourceLocation =
+        { Url : string;
+          LineNumber : int; }
+
     /// Represents module let-bound methods.
     [<DebuggerDisplay("Id:{Id} Name:{Name}")>]
     type ModuleMethod =
@@ -390,6 +394,7 @@ module CodeModel =
             ReturnType : Type
             Id : XmlDoc.Id
             Documentation : option<Documentation>
+            Source : option<SourceLocation>
         }
 
         interface IMember with

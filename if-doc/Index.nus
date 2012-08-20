@@ -51,7 +51,9 @@
 									<ul class="unstyled">
 										{{#functions}}
 										<li class="function">
-											<a class="type-link" href="#{{name}}" name="{{name}}">{{name}}</a> {{{summary}}}.  <em>Params</em>: <code>{{{typesum}}}</code>
+											<a class="type-link" href="#{{name}}" name="{{name}}">{{name}}</a>
+											<a href="{{{sourceUrl}}}"><i class="icon-file"></i></a>
+											 {{{summary}}}.  <em>Params</em>: <code>{{{typesum}}}</code>
 											<!--<br/>{{tokentext}}-->
 										</li>
 										{{/functions}}

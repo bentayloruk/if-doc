@@ -202,6 +202,20 @@ module CodeParser =
                     | [] | [_] -> p
                     | _ -> [({Name = ""; Type = CM.TupleType [for pp in p -> pp.Type]} : CM.Parameter)] 
                 
+            let (|SourceLocation|_|) (ins:Cil.Instruction) = 
+                if ins = null || ins.SequencePoint = null || ins.SequencePoint.Document = null then None
+                else Some({ CM.SourceLocation.LineNumber = ins.SequencePoint.StartLine; CM.SourceLocation.Url = ins.SequencePoint.Document.Url })
+                
+            let sourceLocation = 
+                match m.Body with 
+                | null -> None
+                | body when body.Instructions <> null -> 
+                    body.Instructions 
+                    |> Seq.tryPick (function 
+                        | SourceLocation sl -> Some(sl)
+                        | _ -> None)
+                | _ -> None
+
             let name = 
                 let fsName = m.FSharpName
                 if m.IsOperator 
@@ -216,6 +230,7 @@ module CodeParser =
                     GenericParameters = parseGenerics m.GenericParameters
                     ReturnType = parseType m.ReturnType
                     Parameters = parameters
+                    Source = sourceLocation
             }
             |> Record.Patch (parseMD m)
 
@@ -464,7 +479,8 @@ module CodeParser =
     /// Loads an assembly from a given path.
     let LoadFile (path: string) searchPaths =
         
-        let a = AssemblyDefinition.ReadAssembly path
+        let readerParams = ReaderParameters(ReadingMode.Immediate, ReadSymbols = true)
+        let a = AssemblyDefinition.ReadAssembly(path, readerParams)
 
         let d =
             let p = Path.ChangeExtension(path, ".xml")

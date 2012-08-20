@@ -48,7 +48,8 @@ let TryReadAssembly (path: string) =
     let res = new DefaultAssemblyResolver()//let res = GlobalAssemblyResolver.Instance
 
     try
-        Some (AssemblyDefinition.ReadAssembly path)
+        let readerParams = ReaderParameters(ReadingMode.Immediate, ReadSymbols = true)
+        Some (AssemblyDefinition.ReadAssembly(path, readerParams))
     with e ->
         eprintfn "Failed to read assembly: %s" path
         TraceError 0 e
